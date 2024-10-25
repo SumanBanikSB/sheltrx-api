@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydantic
+motor  # Async MongoDB driver
+python-jose  # For JWT token management
+passlib[bcrypt]  # For password hashing
+python-dotenv  # For loading environment variables
+aiosmtplib
