@@ -1,13 +1,13 @@
 # app/routes/user_routes.py
-from ..dependencies import get_current_user
+from app.dependencies import get_current_user
 from fastapi import APIRouter, HTTPException, status, Depends
 from pymongo import ReturnDocument
 from typing import List
 from bson import ObjectId
 from app.models import UserModel
 from app.schemas import UserCreate, UserResponse
-from ..main import db
-from ..utils import send_email
+from app.database import db
+from app.utils import send_email
 
 router = APIRouter()
 
@@ -18,6 +18,13 @@ async def get_secure_data(current_user: dict = Depends(get_current_user)):
 
 @router.post("/", response_model=UserResponse)
 async def create_user(user: UserCreate):
+    # Ensure that the database is connected
+    if db is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database connection is not available"
+        )
+        
     user_data = user.dict()
     existing_user = await db["users"].find_one({"email": user.email})
     if existing_user:
@@ -30,13 +37,14 @@ async def create_user(user: UserCreate):
     created_user = await db["users"].find_one({"_id": result.inserted_id})
 
     # Send email to the newly created user's email
-    await send_email(
-        to=user.email,
-        subject="Welcome!",
-        body=f"Hello {user.name}, you have been added as a {user.role}."
-    )
+    # await send_email(
+    #     to=user.email,
+    #     subject="Welcome!",
+    #     body=f"Hello {user.name}, you have been added as a {user.role}."
+    # )
 
     return UserResponse(**created_user)
+
 
 @router.get("/", response_model=List[UserResponse])
 async def get_users():

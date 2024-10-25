@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from config import settings
+from .config import settings
 from passlib.context import CryptContext
 from aiosmtplib import send
 from email.message import EmailMessage

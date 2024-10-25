@@ -15,4 +15,4 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-print("HERE",settings.dict())
+# print("HERE",settings.dict())
