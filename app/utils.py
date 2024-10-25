@@ -4,6 +4,16 @@ from config import settings
 from passlib.context import CryptContext
 from aiosmtplib import send
 from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+hostname = os.getenv("SMTP_HOSTNAME")
+port = os.getenv("SMTP_PORT")
+start_tls = os.getenv("SMTP_START_TLS") == 'True'
+username = os.getenv("SMTP_USERNAME")
+password = os.getenv("SMTP_PASSWORD")
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -38,9 +48,9 @@ async def send_email(to: str, subject: str, body: str):
 
     await send(
         msg,
-        hostname="smtp.gmail.com",
-        port=587,
-        start_tls=True,
-        username="SheltrXAPI",
-        password="ymwaadrsyiqehjdr",
+        hostname=hostname,
+        port=int(port),
+        start_tls=start_tls,
+        username=username,
+        password=password
     )
